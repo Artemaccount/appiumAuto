@@ -1,6 +1,8 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
@@ -29,6 +31,18 @@ public class FirstTest {
 
     @Test
     public void firstTest(){
-        System.out.println("First test run");
+        WebElement skipElement = driver.findElement(By.xpath("//*[@text='Skip']"));
+        skipElement.click();
+
+        assertElementHasText(By.xpath("//*[contains(@resource-id,'search_container')]/android.widget.TextView"),
+                "Search Wikipedia",
+                "search field text not equals expected");
+    }
+
+    private WebElement assertElementHasText(By by, String expectedText, String errorMessage){
+        WebElement element = driver.findElement(by);
+        String actualText = element.getText();
+        Assertions.assertEquals(expectedText, actualText, errorMessage);
+        return element;
     }
 }
