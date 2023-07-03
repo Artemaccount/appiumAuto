@@ -4,8 +4,12 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.time.Duration;
+import java.util.List;
 
 public class FirstTest {
     private AppiumDriver driver;
@@ -30,13 +34,44 @@ public class FirstTest {
     }
 
     @Test
-    public void firstTest(){
-        WebElement skipElement = driver.findElement(By.xpath("//*[@text='Skip']"));
-        skipElement.click();
+    public void secondTest(){
+        waitAndClickTo(By.xpath("//*[@text='Skip']"),
+                "cant click to skip button");
 
-        assertElementHasText(By.xpath("//*[contains(@resource-id,'search_container')]/android.widget.TextView"),
-                "Search Wikipedia",
-                "search field text not equals expected");
+        waitAndClickTo(By.xpath("//*[contains(@resource-id, 'search_container')]"),
+                "cant click to search container");
+
+        waitAndSendKeysTo(By.xpath("//*[contains(@resource-id, 'search_src_text')]"),
+                "appium", "cant sendkeys to search input");
+
+        List<WebElement> list = driver.findElements(By.xpath("//*[contains(@resource-id, 'page_list_item_title')]"));
+        Assertions.assertTrue(list.size() > 1, "Found less than 2 articles");
+
+        waitAndClickTo(By.xpath("//*[contains(@resource-id, 'search_close_btn')]"),
+                "cant click to close button");
+
+        waitForElementDisappeared(By.xpath("//*[contains(@resource-id, 'page_list_item_title')]"),
+                "element was found");
+    }
+
+    private void waitForElementDisappeared(By by, String errorMessage){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.withMessage(errorMessage);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
+    }
+
+    private void waitAndClickTo(By by, String errorMessage){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.withMessage(errorMessage);
+        wait.until(
+                ExpectedConditions.presenceOfElementLocated(by)).click();
+    }
+
+    private void waitAndSendKeysTo(By by, String keys, String errorMessage){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.withMessage(errorMessage);
+        wait.until(
+                ExpectedConditions.presenceOfElementLocated(by)).sendKeys(keys);
     }
 
     private WebElement assertElementHasText(By by, String expectedText, String errorMessage){
