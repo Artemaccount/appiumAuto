@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FirstTest {
     private AppiumDriver driver;
@@ -35,6 +36,7 @@ public class FirstTest {
 
     @Test
     public void secondTest(){
+        String expectedWord = "Java";
         waitAndClickTo(By.xpath("//*[@text='Skip']"),
                 "cant click to skip button");
 
@@ -42,16 +44,11 @@ public class FirstTest {
                 "cant click to search container");
 
         waitAndSendKeysTo(By.xpath("//*[contains(@resource-id, 'search_src_text')]"),
-                "appium", "cant sendkeys to search input");
+                expectedWord, "cant sendkeys to search input");
 
         List<WebElement> list = driver.findElements(By.xpath("//*[contains(@resource-id, 'page_list_item_title')]"));
-        Assertions.assertTrue(list.size() > 1, "Found less than 2 articles");
-
-        waitAndClickTo(By.xpath("//*[contains(@resource-id, 'search_close_btn')]"),
-                "cant click to close button");
-
-        waitForElementDisappeared(By.xpath("//*[contains(@resource-id, 'page_list_item_title')]"),
-                "element was found");
+        List<String> textList = list.stream().map(WebElement::getText).collect(Collectors.toList());
+        textList.forEach(s-> Assertions.assertTrue(s.contains(expectedWord)));
     }
 
     private void waitForElementDisappeared(By by, String errorMessage){
