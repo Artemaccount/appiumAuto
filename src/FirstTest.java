@@ -1,12 +1,9 @@
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -18,7 +15,7 @@ import java.time.Duration;
 import java.util.List;
 
 public class FirstTest {
-    private AppiumDriver driver;
+    private AndroidDriver driver;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -35,6 +32,7 @@ public class FirstTest {
 
     @AfterEach
     public void tearDown() {
+        driver.rotate(ScreenOrientation.PORTRAIT);
         driver.quit();
     }
 
@@ -62,11 +60,11 @@ public class FirstTest {
         assertElementPresent(By.xpath("//*[@resource-id='pcs-edit-section-title-description']/preceding-sibling::*[@class='android.widget.TextView']"));
     }
 
-    private void assertElementPresent(By by){
+    private void assertElementPresent(By by) {
         boolean isElementPresented = true;
-        try{
+        try {
             isElementPresented = driver.findElement(by).isDisplayed();
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             isElementPresented = false;
         } finally {
             Assertions.assertTrue(isElementPresented, "element is not presented");
