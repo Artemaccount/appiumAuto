@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -58,48 +59,18 @@ public class FirstTest {
 
         waitAndClickTo(resultList.get(0), "cannot click to first element of list");
 
-        waitAndClickTo(By.id("org.wikipedia:id/page_save"),
-                "cannot click to page save");
+        assertElementPresent(By.xpath("//*[@resource-id='pcs-edit-section-title-description']/preceding-sibling::*[@class='android.widget.TextView']"));
+    }
 
-        waitAndClickTo(By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
-                "cannot click to navigate up button");
-
-        List<WebElement> resultList2 = waitForList(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup"),
-                "list size less than 1");
-
-        waitAndClickTo(resultList2.get(1), "cannot click to first element of list");
-
-        waitAndClickTo(By.id("org.wikipedia:id/page_save"),
-                "cannot click to page save");
-
-        waitAndClickTo(By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
-                "cannot click to navigate up button");
-        waitAndClickTo(By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
-                "cannot click to navigate up button");
-
-        waitAndClickTo(By.id("org.wikipedia:id/nav_tab_reading_lists"), "cannot click to saved");
-
-        waitAndClickTo(By.id("org.wikipedia:id/item_title_container"), "cannot click to saved list");
-
-        List<WebElement> savedList = waitForList(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title']"),
-                "cannot load saved list");
-
-        swipeElementToLeft(savedList.get(0));
-
-        List<WebElement> savedList2 = waitForList(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title']"),
-                "cannot load saved list");
-
-        Assertions.assertEquals("JavaScript", savedList2.get(0).getText());
-
-        waitAndClickTo(savedList2.get(0), "cannot click to saved list item");
-
-
-        String title = waitForElementVisibility(By.xpath("//*[@resource-id='pcs-edit-section-title-description']/preceding-sibling::*[@class='android.widget.TextView']"),
-                "element is not visible").getText();
-
-        Assertions.assertEquals("JavaScript", title);
-
+    private void assertElementPresent(By by){
+        boolean isElementPresented = true;
+        try{
+            isElementPresented = driver.findElement(by).isDisplayed();
+        } catch (NoSuchElementException e){
+            isElementPresented = false;
+        } finally {
+            Assertions.assertTrue(isElementPresented, "element is not presented");
+        }
     }
 
     private void swipeElementToLeft(WebElement element) {
