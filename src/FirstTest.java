@@ -20,6 +20,7 @@ public class FirstTest {
     @BeforeEach
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("deviceOrientation", "portrait");
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "AndroidTestDevice");
         capabilities.setCapability("platformVersion", "14");
@@ -32,7 +33,6 @@ public class FirstTest {
 
     @AfterEach
     public void tearDown() {
-        driver.rotate(ScreenOrientation.PORTRAIT);
         driver.quit();
     }
 
