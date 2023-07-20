@@ -17,11 +17,19 @@ public class SearchPageObject extends MainPageObject {
     private static final String CLOSE_BUTTON_XPATH = "//*[contains(@resource-id, 'search_close_btn')]";
     private static final String SAVED_LIST_MAIN_ID = "org.wikipedia:id/nav_tab_reading_lists";
     private static final String SAVED_LIST_CONTAINER_ID = "org.wikipedia:id/item_title_container";
+    private static final String SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text()='{SUBSTRING}']";
 
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
     }
+
+
+    /* TEMPLATE METHODS */
+    private static String getResultSearchElement(String substring){
+        return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
+    }
+    /* TEMPLATE METHODS */
 
     public void searchInWiki(String word) {
         waitAndClickTo(By.id(SEARCH_CONTAINER_ID),
