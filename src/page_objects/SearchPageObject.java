@@ -18,7 +18,7 @@ public class SearchPageObject extends MainPageObject {
     private static final String SAVED_LIST_MAIN_ID = "org.wikipedia:id/nav_tab_reading_lists";
     private static final String SAVED_LIST_CONTAINER_ID = "org.wikipedia:id/item_title_container";
     private static final String SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text()='{SUBSTRING}']";
-
+    private static final String SEARCH_RESULT_BY_TITLE_AND_DESC_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_title' and @text = '{TITLE}']/following-sibling::*[contains(@text,'{DESC}')]/..";
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -26,10 +26,21 @@ public class SearchPageObject extends MainPageObject {
 
 
     /* TEMPLATE METHODS */
-    private static String getResultSearchElement(String substring){
+    private static String getResultSearchElement(String substring) {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
     }
+
+    private static String getResultByTitleAndDesc(String title, String desc) {
+        return SEARCH_RESULT_BY_TITLE_AND_DESC_TPL.replace("{TITLE}", title)
+                .replace("{DESC}", desc);
+    }
+
     /* TEMPLATE METHODS */
+
+    public void waitForElementByTitleAndDescription(String title, String description){
+        String xpath = getResultByTitleAndDesc(title, description);
+        waitForElementVisibility(By.xpath(xpath), String.format("element with title %s and desc %s is not visible",title, description));
+    }
 
     public void searchInWiki(String word) {
         waitAndClickTo(By.id(SEARCH_CONTAINER_ID),
