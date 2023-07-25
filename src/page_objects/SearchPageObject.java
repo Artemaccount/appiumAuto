@@ -39,24 +39,23 @@ public class SearchPageObject extends MainPageObject {
 
     public void waitForElementByTitleAndDescription(String title, String description){
         String xpath = getResultByTitleAndDesc(title, description);
-        waitForElementVisibility(By.xpath(xpath), String.format("element with title %s and desc %s is not visible",title, description));
+        waitForElementVisibility("xpath:" + xpath, String.format("element with title %s and desc %s is not visible",title, description));
     }
 
     public void searchInWiki(String word) {
-        waitAndClickTo(By.id(SEARCH_CONTAINER_ID),
+        waitAndClickTo("id:" + SEARCH_CONTAINER_ID,
                 "cannot click to Search Wikipedia");
 
-        waitAndClickTo(By.id(SEARCH_CONTAINER_ID),
+        waitAndClickTo("id:" + SEARCH_CONTAINER_ID,
                 "cannot click to Search Wikipedia");
 
-        waitAndSendKeysTo(By.xpath(SEARCH_LINE_XPATH),
+        waitAndSendKeysTo("xpath:" + SEARCH_LINE_XPATH,
                 word,
                 "cannot send keys to Search Wikipedia");
     }
 
     public List<WebElement> getSearchResultList() {
-        return waitForList(
-                By.xpath(SEARCH_LIST_XPATH),
+        return waitForList("xpath:" + SEARCH_LIST_XPATH,
                 "list size less than 1");
     }
 
@@ -66,12 +65,12 @@ public class SearchPageObject extends MainPageObject {
     }
 
     public void clickCloseButton() {
-        waitAndClickTo(By.xpath(CLOSE_BUTTON_XPATH),
+        waitAndClickTo("xpath:" + CLOSE_BUTTON_XPATH,
                 "cant click to close button");
     }
 
     public void openSavedList() {
-        waitAndClickTo(By.id(SAVED_LIST_MAIN_ID), "cannot click to saved");
-        waitAndClickTo(By.id(SAVED_LIST_CONTAINER_ID), "cannot click to saved list");
+        waitAndClickTo("id:" + SAVED_LIST_MAIN_ID, "cannot click to saved");
+        waitAndClickTo("id:" + SAVED_LIST_CONTAINER_ID, "cannot click to saved list");
     }
 }

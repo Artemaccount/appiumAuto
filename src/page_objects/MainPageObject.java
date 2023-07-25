@@ -28,30 +28,34 @@ public class MainPageObject {
 
 
     public void skipOnboarding(){
-        waitAndClickTo(By.xpath(SKIP_BUTTON_XPATH),
+        waitAndClickTo("xpath:" + SKIP_BUTTON_XPATH,
                 "cant click to skip button");
     }
 
-    protected void waitForElementDisappeared(By by, String errorMessage) {
+    protected void waitForElementDisappeared(String locator, String errorMessage) {
+        By by = getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.withMessage(errorMessage);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
 
-    protected WebElement waitForElementVisibility(By by, String errorMessage) {
+    protected WebElement waitForElementVisibility(String locator, String errorMessage) {
+        By by = getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.withMessage(errorMessage);
         return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
-    protected List<WebElement> waitForList(By by, String errorMessage) {
+    protected List<WebElement> waitForList(String locator, String errorMessage) {
+        By by = getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.withMessage(errorMessage);
         wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(by, 0));
         return driver.findElements(by);
     }
 
-    protected void waitAndClickTo(By by, String errorMessage) {
+    protected void waitAndClickTo(String locator, String errorMessage) {
+        By by = getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.withMessage(errorMessage);
         wait.until(
@@ -59,8 +63,8 @@ public class MainPageObject {
     }
 
     public void openSavedList(){
-        waitAndClickTo(By.id(READING_LIST_ID), "cannot click to saved");
-        waitAndClickTo(By.id(ITEM_TITLE_CONTAINER_ID), "cannot click to saved list");
+        waitAndClickTo("id:" + READING_LIST_ID, "cannot click to saved");
+        waitAndClickTo("id:" + ITEM_TITLE_CONTAINER_ID, "cannot click to saved list");
     }
 
     protected void waitAndClickTo(WebElement element, String errorMessage) {
@@ -71,11 +75,12 @@ public class MainPageObject {
     }
 
     public void clickNavigateUpButton(){
-        waitAndClickTo(By.xpath(NAVIGATE_UP_BUTTON_XPATH),
+        waitAndClickTo("xpath:" + NAVIGATE_UP_BUTTON_XPATH,
                 "cannot click to navigate up button");
     }
 
-    protected void waitAndSendKeysTo(By by, String keys, String errorMessage) {
+    protected void waitAndSendKeysTo(String locator, String keys, String errorMessage) {
+        By by = getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.withMessage(errorMessage);
         wait.until(
@@ -99,15 +104,8 @@ public class MainPageObject {
         driver.perform(List.of(swipe));
     }
 
-    protected WebElement assertElementHasText(By by, String expectedText, String errorMessage) {
-        WebElement element = driver.findElement(by);
-        String actualText = element.getText();
-        Assertions.assertEquals(expectedText, actualText, errorMessage);
-        return element;
-    }
-
     public void checkSearchPageClosed(){
-        waitForElementDisappeared(By.xpath(PAGE_LIST_ITEM_TITLE_XPATH),
+        waitForElementDisappeared("xpath:" + PAGE_LIST_ITEM_TITLE_XPATH,
                 "element was found");
     }
 
@@ -121,6 +119,20 @@ public class MainPageObject {
             isElementPresented = false;
         } finally {
             Assertions.assertTrue(isElementPresented, "element is not presented");
+        }
+    }
+
+    private By getLocatorByString(String locatorWithBy){
+        String[] parts = locatorWithBy.split(":");
+        String by = parts[0];
+        String locator = parts[1];
+        switch (by){
+            case "xpath":
+                return By.xpath(locator);
+            case "id":
+                return By.id(locator);
+            default:
+                throw new IllegalArgumentException("by not found " + by);
         }
     }
 }

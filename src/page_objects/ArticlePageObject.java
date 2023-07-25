@@ -2,7 +2,6 @@ package page_objects;
 
 import io.appium.java_client.AppiumDriver;
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -19,19 +18,19 @@ public class ArticlePageObject extends MainPageObject{
     public void saveArticle(WebElement element){
         waitAndClickTo(element, "cannot click to first element of list");
 
-        waitAndClickTo(By.id(SAVE_PAGE_BUTTON_ID),
+        waitAndClickTo("id:" + SAVE_PAGE_BUTTON_ID,
                 "cannot click to page save");
     }
 
     public List<WebElement> getSavedList(){
-        return waitForList(By.xpath(SAVED_LIST_XPATH),
+        return waitForList("xpath:" + SAVED_LIST_XPATH,
                 "cannot load saved list");
     }
 
     public void checkArticleTitle(WebElement element, String expectedTitle){
         waitAndClickTo(element, "cannot click to saved list item");
 
-        String actualTitle = waitForElementVisibility(By.xpath(ARTICLE_TITLE_XPATH),
+        String actualTitle = waitForElementVisibility("xpath:" + ARTICLE_TITLE_XPATH,
                 "element is not visible").getText();
 
         Assertions.assertEquals(expectedTitle, actualTitle);
