@@ -1,8 +1,7 @@
-package ios_tests;
+package tests;
 
 import org.junit.jupiter.api.Test;
-import page_objects.WelcomePageObject;
-import tests.BaseTest;
+import lib.page_objects.ios.WelcomePageObject;
 
 public class GetStartedTests extends BaseTest {
 

@@ -1,25 +1,32 @@
-package page_objects;
+package lib.page_objects.abstract_page_objects;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Interaction;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 
-public class MainPageObject {
-    private static final String SKIP_BUTTON_XPATH = "//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']";
-    private static final String READING_LIST_ID = "org.wikipedia:id/nav_tab_reading_lists";
-    private static final String ITEM_TITLE_CONTAINER_ID = "org.wikipedia:id/item_title_container";
-    private static final String NAVIGATE_UP_BUTTON_XPATH = "//android.widget.ImageButton[@content-desc='Navigate up']";
-    private static final String PAGE_LIST_ITEM_TITLE_XPATH = "//*[contains(@resource-id, 'page_list_item_title')]";
-    private static final String ITEM_TITLE_XPATH = "//*[@resource-id='pcs-edit-section-title-description']/preceding-sibling::*[@class='android.widget.TextView']";
+public abstract class MainPageObject {
+    protected static String SKIP_BUTTON_XPATH;
+    protected static String READING_LIST_ID;
+    protected static String ITEM_TITLE_CONTAINER_ID;
+    protected static String NAVIGATE_UP_BUTTON_XPATH;
+    protected static String PAGE_LIST_ITEM_TITLE_XPATH;
+    protected static String ITEM_TITLE_XPATH;
+    private static final String cancelButton = "xpath://XCUIElementTypeStaticText[@name='Cancel']";
+
+    private static final String closeButtonId = "id:Close";
+
     private AppiumDriver driver;
 
     public MainPageObject(AppiumDriver driver) {
@@ -28,7 +35,7 @@ public class MainPageObject {
 
 
     public void skipOnboarding(){
-        waitAndClickTo("xpath:" + SKIP_BUTTON_XPATH,
+        waitAndClickTo(SKIP_BUTTON_XPATH,
                 "cant click to skip button");
     }
 
@@ -41,7 +48,7 @@ public class MainPageObject {
 
     protected WebElement waitForElementVisibility(String locator, String errorMessage) {
         By by = getLocatorByString(locator);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.withMessage(errorMessage);
         return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
@@ -63,8 +70,17 @@ public class MainPageObject {
     }
 
     public void openSavedList(){
-        waitAndClickTo("id:" + READING_LIST_ID, "cannot click to saved");
-        waitAndClickTo("id:" + ITEM_TITLE_CONTAINER_ID, "cannot click to saved list");
+        waitAndClickTo(READING_LIST_ID, "cannot click to saved");
+        if (Platform.getInstance().isAndroid()) {
+            waitAndClickTo(ITEM_TITLE_CONTAINER_ID, "cannot click to saved list");
+        } else {
+            clickCloseSyncMenu();
+        }
+
+    }
+
+    public void clickCloseSyncMenu(){
+        waitAndClickTo(closeButtonId, "cannot close window");
     }
 
     protected void waitAndClickTo(WebElement element, String errorMessage) {
@@ -75,7 +91,12 @@ public class MainPageObject {
     }
 
     public void clickNavigateUpButton(){
-        waitAndClickTo("xpath:" + NAVIGATE_UP_BUTTON_XPATH,
+        waitAndClickTo(NAVIGATE_UP_BUTTON_XPATH,
+                "cannot click to navigate up button");
+    }
+
+    public void clickCancel(){
+        waitAndClickTo(cancelButton,
                 "cannot click to navigate up button");
     }
 
@@ -88,6 +109,15 @@ public class MainPageObject {
     }
 
     public void swipeElementToLeft(WebElement element) {
+     if(Platform.getInstance().isAndroid()){
+         swipeElementToLeftAndroid(element);
+     } else {
+         swipeElementToLeftIOS(element);
+     }
+    }
+
+    public void swipeElementToLeftAndroid(WebElement element){
+        WebElement element1 = driver.findElement(By.xpath("//XCUIElementTypeApplication[@name=\"Wikipedia\"]/XCUIElementTypeWindow[1]/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther[2]/XCUIElementTypeOther/XCUIElementTypeCollectionView/XCUIElementTypeCell/XCUIElementTypeOther[2]/XCUIElementTypeStaticText[1]"));
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence swipe = new Sequence(finger, 0);
 
@@ -104,8 +134,41 @@ public class MainPageObject {
         driver.perform(List.of(swipe));
     }
 
+    public void swipeElementToLeftIOS(WebElement element) {
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        int rightX = element.getSize().getWidth();
+        int leftX = element.getLocation().getX();
+        int upperY = element.getLocation().getY();
+        int lowerY = upperY + element.getSize().getHeight();
+        int middleY = (upperY + lowerY) / 2;
+
+        fingerSwipe(rightX + 1000, middleY, leftX, middleY, 800);
+    }
+
+    private void fingerSwipe(int startX, int startY, int endX, int endY, long timeInMillis) {
+        PointerInput touchAction = new PointerInput(PointerInput.Kind.TOUCH, "touchAction");
+        Interaction moveToStart = touchAction.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY);
+        Interaction pressDown = touchAction.createPointerDown(PointerInput.MouseButton.LEFT.asArg());
+        Interaction moveToEnd = touchAction.createPointerMove(Duration.ofMillis(timeInMillis), PointerInput.Origin.viewport(), endX, endY);
+        Interaction pressUp = touchAction.createPointerUp(PointerInput.MouseButton.LEFT.asArg());
+
+        Sequence swipe = new Sequence(touchAction, 0);
+        swipe.addAction(moveToStart);
+        swipe.addAction(pressDown);
+        swipe.addAction(moveToEnd);
+        swipe.addAction(pressUp);
+
+        driver.perform(Arrays.asList(swipe));
+    }
+
     public void checkSearchPageClosed(){
-        waitForElementDisappeared("xpath:" + PAGE_LIST_ITEM_TITLE_XPATH,
+        waitForElementDisappeared(PAGE_LIST_ITEM_TITLE_XPATH,
                 "element was found");
     }
 

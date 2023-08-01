@@ -240,7 +240,7 @@ v4.5.0
 * Remove IME support
 * Remove deprecated ForSeleniumServer caps
 * Remove deprecated BrowserType
-* Differentiate "Windows 7" and "Windows Vista" in Platform class
+* Differentiate "Windows 7" and "Windows Vista" in lib.Platform class
 * Fix bug preventing websocket connections in Firefox v105 from localhost
 
 v4.4.0
@@ -724,7 +724,7 @@ v4.0.0-alpha-3
 * Back out OpenCensus support: OpenTracing and OpenCensus are merging, so
   settle on one for now.
 * Only allow CORS when using a —allow-cors flag in the Grid server
-* If you're using the Java Platform Module System, all modules
+* If you're using the Java lib.Platform Module System, all modules
   associated with the project are generated as "open" modules. This
   will change in a future release.
 * The version of Jetty being used is unshadowed.
@@ -790,7 +790,7 @@ v3.141.0
 * Correct localisation of platform name (#6491)
 * Beta commands in SafariDriver for opening a new window or tab.
 * Clean up of internal of `Select` element wrapper (#6501)
-* Acknowledge that Mojave is a `Platform` (#6552)
+* Acknowledge that Mojave is a `lib.Platform` (#6552)
 * Deleted many command-line options marked as deprecated some time
   ago.
 * Removed Selenium's own deprecated `Duration` and `Clock` classes in
@@ -1032,11 +1032,11 @@ Important note:
   passthrough mode.
 * Fixes issue with W3C Actions not being properly filled when multiple
   input sources are used.
-* Platform that represent platform families ("WINDOWS", "UNIX", "MAC",
-  and "IOS") return `null` from `Platform.getFamily`.
+* lib.Platform that represent platform families ("WINDOWS", "UNIX", "MAC",
+  and "IOS") return `null` from `lib.Platform.getFamily`.
 * Handle null return values from chromedriver. Fixes #4555
 * Synchronized "platform" and "platformName" capability values. Fixes #4565
-* Add iOS `Platform`.
+* Add iOS `lib.Platform`.
 * Fix wrapping of maps with null values. Fixes #3380
 * Grid: Add new w3c compatible `status` endpoints for Hub and nodes.
 * Grid: Properly parse responses from upstream nodes that are not
@@ -1435,13 +1435,13 @@ WebDriver:
     * Reduces time wasted in when using a native driver
     * add the useful information about the session / capabilities in the exception when the 'browser may have died'
     * give the cleaner almost double the time to clean up the sessions (a whopping 9 more ms). Hopefully will deflake this test in CI.
-    * Adding El Capitan (OS X 10.11) to Platform
+    * Adding El Capitan (OS X 10.11) to lib.Platform
     * Updating IE driver to fix clearing of <input type='number'> fields
     * Treat a null response to getCookies as [].
     * Restore a isNativeEventsEnabled check.
     * Updating TestNG.
     * firefox: Throw error when element cannot be clicked
-    * Include Windows 10 in the Platform enum.
+    * Include Windows 10 in the lib.Platform enum.
     * adding selenium server pass throughs for W3C dialect of alert / window / cookie commands.
     * clearing a number input with invalid text, should actually clear it.
     * Add innerHTML attribute support to HtmlUnitDriver
@@ -1748,7 +1748,7 @@ Other changes:
 * Adding support for Blink-based Opera to Java binding
 * Adding Yosemite platform
 * Allowing to set an arbitrary platform capability even if it can't be
-  converted to Platform enum. Non-standard platform values can cause
+  converted to lib.Platform enum. Non-standard platform values can cause
   matching issues on Grid, but they can be usable for third-party Grid
   implementations
 * Taking XML namespaces into account when searching by XPath. Checked
@@ -1985,7 +1985,7 @@ WebDriver:
   * added task name to SCHEDULE_TASK event
   * Eclipse compiler update for Java 8 support
   * Updating naive user agent string checks to account for IE11
-  * Adding Windows 8.1 detection to Platform.extractFromSysProperty
+  * Adding Windows 8.1 detection to lib.Platform.extractFromSysProperty
   * retry a test failure if there was a 'sauce' issue, like we exceeded the total time a test session is allowed to take.
   * adding Windows 8.1 platform, so we can use it in saucelabs for IE11 testing
   * Remove deprecated functions on webdriver.promise.Promise class * Use templates with webdriver.promise.Promise to improve types   documentation.

@@ -1,20 +1,24 @@
 package tests;
 
+import lib.Platform;
+import lib.page_objects.factories.ArticlePageObjectFactory;
+import lib.page_objects.factories.MainPageObjectFactory;
+import lib.page_objects.factories.SearchPageObjectFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
-import page_objects.ArticlePageObject;
-import page_objects.MainPageObject;
-import page_objects.SearchPageObject;
+import lib.page_objects.abstract_page_objects.ArticlePageObject;
+import lib.page_objects.abstract_page_objects.MainPageObject;
+import lib.page_objects.abstract_page_objects.SearchPageObject;
 
 import java.util.List;
 
 public class ArticleTests extends BaseTest {
     @Test
     public void deleteArticleSuccessTest() {
-        MainPageObject mainPageObject = new MainPageObject(driver);
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
-        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        MainPageObject mainPageObject = MainPageObjectFactory.get(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
+        ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
 
         mainPageObject.skipOnboarding();
         searchPageObject.searchInWiki("Java");
@@ -28,26 +32,40 @@ public class ArticleTests extends BaseTest {
         articlePageObject.saveArticle(resultList2.get(1));
 
         searchPageObject.clickNavigateUpButton();
-        searchPageObject.clickNavigateUpButton();
+        if(Platform.getInstance().isIOS()){
+            searchPageObject.clickCancel();
+        } else {
+            searchPageObject.clickNavigateUpButton();
+        }
 
         mainPageObject.openSavedList();
 
-        List<WebElement> savedList = articlePageObject.getSavedList();
+        if(Platform.getInstance().isAndroid()){
+            List<WebElement> savedList = articlePageObject.getSavedList();
+            articlePageObject.swipeElementToLeft(savedList.get(0));
 
-        articlePageObject.swipeElementToLeft(savedList.get(0));
+            List<WebElement> savedList2 = articlePageObject.getSavedList();
+            Assertions.assertEquals("JavaScript", savedList2.get(0).getText());
 
-        List<WebElement> savedList2 = articlePageObject.getSavedList();
+            articlePageObject.checkArticleTitle(savedList2.get(0), "JavaScript");
 
-        Assertions.assertEquals("JavaScript", savedList2.get(0).getText());
+        } else {
+            List<WebElement> savedList = articlePageObject.getSavedListIos();
+            articlePageObject.swipeElementToLeftIOS(savedList.get(0));
+            articlePageObject.clickDeleteIOS();
 
-        articlePageObject.checkArticleTitle(savedList2.get(0), "JavaScript");
+            List<WebElement> savedList2 = articlePageObject.getSavedList();
+            Assertions.assertEquals("Java", savedList2.get(0).getText());
+
+            articlePageObject.checkArticleTitleIOS(savedList2.get(0), "Java");
+        }
 
     }
 
     @Test
     public void titlePresentTest() {
-        MainPageObject mainPageObject = new MainPageObject(driver);
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        MainPageObject mainPageObject = MainPageObjectFactory.get(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         mainPageObject.skipOnboarding();
         searchPageObject.searchInWiki("Java");
