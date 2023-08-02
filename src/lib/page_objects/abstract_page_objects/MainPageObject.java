@@ -135,20 +135,19 @@ public abstract class MainPageObject {
     }
 
     public void swipeElementToLeftIOS(WebElement element) {
-
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        int rightX = element.getSize().getWidth();
+        int rightX = element.getLocation().getX() + 1000;
         int leftX = element.getLocation().getX();
         int upperY = element.getLocation().getY();
         int lowerY = upperY + element.getSize().getHeight();
         int middleY = (upperY + lowerY) / 2;
 
-        fingerSwipe(rightX + 1000, middleY, leftX, middleY, 800);
+        fingerSwipe(rightX, middleY, leftX, middleY, 300);
     }
 
     private void fingerSwipe(int startX, int startY, int endX, int endY, long timeInMillis) {
