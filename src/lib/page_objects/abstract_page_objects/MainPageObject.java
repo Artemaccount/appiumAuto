@@ -53,6 +53,30 @@ public abstract class MainPageObject {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
+    protected void waitForElementVisibilityIOS(String locator, String errorMessage) {
+        By by = getLocatorByString(locator);
+        int maxTry = 10;
+        boolean exists = false;
+        for (int i = 0; i < maxTry; i++) {
+            exists = !driver.findElements(by).isEmpty();
+            if(exists){
+                break;
+            } else {
+                waitForSeconds(1);
+            }
+        }
+        if(!exists){
+            throw new RuntimeException(errorMessage);
+        }
+    }
+    private void waitForSeconds(int seconds){
+        try {
+            Thread.sleep(1000 * seconds);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected List<WebElement> waitForList(String locator, String errorMessage) {
         By by = getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
@@ -117,7 +141,6 @@ public abstract class MainPageObject {
     }
 
     public void swipeElementToLeftAndroid(WebElement element){
-        WebElement element1 = driver.findElement(By.xpath("//XCUIElementTypeApplication[@name=\"Wikipedia\"]/XCUIElementTypeWindow[1]/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther[2]/XCUIElementTypeOther/XCUIElementTypeCollectionView/XCUIElementTypeCell/XCUIElementTypeOther[2]/XCUIElementTypeStaticText[1]"));
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence swipe = new Sequence(finger, 0);
 
@@ -185,14 +208,14 @@ public abstract class MainPageObject {
     }
 
     private By getLocatorByString(String locatorWithBy){
-        String[] parts = locatorWithBy.split(":");
+        String[] parts = locatorWithBy.split(":", 2);
         String by = parts[0];
         String locator = parts[1];
         switch (by){
             case "xpath":
-                return By.xpath(locator);
+                return By.xpath(locator.toString());
             case "id":
-                return By.id(locator);
+                return By.id(locator.toString());
             default:
                 throw new IllegalArgumentException("by not found " + by);
         }

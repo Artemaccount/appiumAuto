@@ -1,5 +1,6 @@
 package tests;
 
+import lib.Platform;
 import lib.page_objects.factories.MainPageObjectFactory;
 import lib.page_objects.factories.SearchPageObjectFactory;
 import org.junit.jupiter.api.Assertions;
@@ -18,10 +19,17 @@ public class SearchTests extends BaseTest {
         mainPageObject.skipOnboarding();
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.searchInWiki("Kotlin");
-        searchPageObject.waitForElementByTitleAndDescription("Kotlin","Topics referred to by the same term");
-        searchPageObject.waitForElementByTitleAndDescription("Kotlin (programming language)","General-purpose programming language derived from Java");
-        searchPageObject.waitForElementByTitleAndDescription("Kotlin-class destroyer","Soviet destroyers built 1955-1958");
+        if(Platform.getInstance().isAndroid()){
+            searchPageObject.waitForElementByTitleAndDescription("Kotlin","Topics referred to by the same term");
+            searchPageObject.waitForElementByTitleAndDescription("Kotlin (programming language)","General-purpose programming language derived from Java");
+            searchPageObject.waitForElementByTitleAndDescription("Kotlin-class destroyer","Soviet destroyers built 1955-1958");
+        } else {
+            searchPageObject.waitForElementByTitleAndDescriptionIOS("Kotlin","Topics referred to by the same term");
+            searchPageObject.waitForElementByTitleAndDescriptionIOS("Kotlin (programming language)","General-purpose programming language derived from Java");
+            searchPageObject.waitForElementByTitleAndDescriptionIOS("Kotlin-class destroyer","Soviet destroyers built 1955-1958");
+        }
     }
+
     @Test
     public void searchListContainsWordTest() {
         String expectedWord = "Java";

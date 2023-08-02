@@ -13,7 +13,7 @@ public class SearchPageObjectIOS extends SearchPageObject {
         SAVED_LIST_MAIN_ID = "";
         SAVED_LIST_CONTAINER_ID = "";
         SEARCH_RESULT_BY_SUBSTRING_TPL = "";
-        SEARCH_RESULT_BY_TITLE_AND_DESC_TPL = "";
+        SEARCH_RESULT_BY_TITLE_AND_DESC_TPL = "xpath://XCUIElementTypeStaticText[@name='{TITLE}']/following-sibling::*[@name='{DESC}']";
     }
 
     public SearchPageObjectIOS(AppiumDriver driver) {

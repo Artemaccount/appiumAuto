@@ -42,6 +42,11 @@ public abstract class SearchPageObject extends MainPageObject {
         waitForElementVisibility(xpath, String.format("element with title %s and desc %s is not visible",title, description));
     }
 
+    public void waitForElementByTitleAndDescriptionIOS(String title, String description){
+        String xpath = getResultByTitleAndDesc(title, description);
+        waitForElementVisibilityIOS(xpath, String.format("element with title %s and desc %s is not visible",title, description));
+    }
+
     public void searchInWiki(String word) {
         waitAndClickTo(SEARCH_CONTAINER_ID,
                 "cannot click to Search Wikipedia");
